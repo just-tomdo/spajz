@@ -9,12 +9,14 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
+// represents the basic JSON structure of error in HTTP
 type errorResponse struct {
 	Status  int    `json:"status"`
 	Code    string `json:"code"`
 	Message string `json:"message"`
 }
 
+// provides all necessary data about error to resolve return in Echo
 type errorInfo struct {
 	Status    int
 	Code      string
@@ -46,7 +48,7 @@ var errorRegistry = []struct {
 	{models.ErrInvalidURLFormat, errorInfo{Status: http.StatusBadRequest, Code: models.CodeInvalidURLFormat, Message: "Invalid URL format, please use /<bucket>/<file_path>@<preset>."}},
 }
 
-func lookupErrorInfo(err error) (errorInfo, bool) {
+func lookupErrorInfo(err error) (info errorInfo, knownError bool) {
 	for _, e := range errorRegistry {
 		if errors.Is(err, e.Err) {
 			return e.Info, true
